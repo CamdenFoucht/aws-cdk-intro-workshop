@@ -81,12 +81,21 @@ export class CdkWorkshop extends cdk.Stack {
             retainOnDelete: true
         });
 
+        const originAccessIdentity = new cloudfront.OriginAccessIdentity(this, 'OAI', {
+            comment: "Created_by_dmahapatro"
+        });
+
+        bucket.grantRead(originAccessIdentity);
+
         new cloudfront.Distribution(this, 'myDist', {
             defaultBehavior: { origin: new origins.S3Origin(bucket, {
-                originPath: `/${contentHash}`
+                originPath: `/${contentHash}`,
+                originAccessIdentity: originAccessIdentity,
             }),
                 allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+                
             },
+            
         });
 
         // // Bucket to hold the static website
