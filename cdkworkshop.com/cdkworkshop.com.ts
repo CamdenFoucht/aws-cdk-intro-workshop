@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import cdk = require('@aws-cdk/core');
-import route53 = require('@aws-cdk/aws-route53');
-import route53Targets = require('@aws-cdk/aws-route53-targets');
+// import route53 = require('@aws-cdk/aws-route53');
+// import route53Targets = require('@aws-cdk/aws-route53-targets');
 import cloudfront = require('@aws-cdk/aws-cloudfront');
 import s3 = require('@aws-cdk/aws-s3');
-import { GuardDutyNotifier } from './guardduty';
-import s3deploy = require('@aws-cdk/aws-s3-deployment');
-import path = require('path');
-import { hashDirectorySync } from './hash';
+// import { GuardDutyNotifier } from './guardduty';
+// import s3deploy = require('@aws-cdk/aws-s3-deployment');
+// import path = require('path');
+// import { hashDirectorySync } from './hash';
 import { PipelineStack } from './pipeline';
 import * as origins from '@aws-cdk/aws-cloudfront-origins';
 
