@@ -8,7 +8,7 @@ export class PipelineStack extends Stack {
 
 
     const source = CodePipelineSource.gitHub('CamdenFoucht/aws-cdk-intro-workshop', 'master', {
-      authentication: SecretValue.secretsManager("github-token");
+      authentication: SecretValue.secretsManager("github-token")
     });
 
     const pipeline = new CodePipeline(this, 'Pipeline', {
