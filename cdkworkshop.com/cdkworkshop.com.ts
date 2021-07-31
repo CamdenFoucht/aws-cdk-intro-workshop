@@ -98,6 +98,21 @@ export class CdkWorkshop extends cdk.Stack {
             
         });
 
+        new cloudfront.CloudFrontWebDistribution(this, 'CloudFront', {
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            originConfigs: [{
+                behaviors: [{
+                    isDefaultBehavior: true,
+                }],
+                originPath: `/${contentHash}`,
+                s3OriginSource: {
+                    s3BucketSource: bucket,
+                    originAccessIdentity: originAccessIdentity,
+                }
+            }],
+
+        })
+
         // // Bucket to hold the static website
         // const bucket = new s3.Bucket(this, 'Bucket', {
         //     websiteIndexDocument: 'index.html'
