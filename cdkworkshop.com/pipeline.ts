@@ -1,42 +1,30 @@
 import { Construct, Stack, StackProps, SecretValue } from '@aws-cdk/core';
-import * as pipelines from '@aws-cdk/pipelines';
-import * as cpipe from '@aws-cdk/aws-codepipeline';
-import * as cpipe_actions from '@aws-cdk/aws-codepipeline-actions';
 import { TheCdkWorkshopStage } from './cdkworkshop.com';
+import { CodePipeline, ShellStep, CodePipelineSource } from '@aws-cdk/pipelines';
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const sourceArtifact = new cpipe.Artifact();
-    const cloudAssemblyArtifact = new cpipe.Artifact();
 
-    const pipeline = new pipelines.CdkPipeline(this, 'Pipeline', {
-      pipelineName: 'WorkshopPipeline',
-      cloudAssemblyArtifact,
-
-      sourceAction: new cpipe_actions.GitHubSourceAction({
-        actionName: 'GitHub',
-        output: sourceArtifact,
-        owner: 'CamdenFoucht',
-        repo: 'aws-cdk-intro-workshop',
-        oauthToken: SecretValue.secretsManager('github-token'),
-      }),
-
-      synthAction: pipelines.SimpleSynthAction.standardNpmSynth({
-        actionName: 'Synth',
-        cloudAssemblyArtifact,
-        sourceArtifact,
-        subdirectory: 'cdkworkshop.com',
-
-        // Hugo is necessary for the build -- install from included tarball
-        installCommand: 'npm ci && tar -C /usr/local/bin -xzf hugo/hugo_*_Linux-64bit.tar.gz hugo',
-        buildCommand: 'npm run build',
-        synthCommand: 'npx cdk synth'
-
-      }),
+    const source = CodePipelineSource.gitHub('CamdenFoucht/aws-cdk-intro-workshop', 'master', {
+      authentication: SecretValue.secretsManager("github-token");
     });
 
-    pipeline.addApplicationStage(new TheCdkWorkshopStage(this, 'Prod'));
+    const pipeline = new CodePipeline(this, 'Pipeline', {
+      synth: new ShellStep('Synth', {
+        input: source,
+        primaryOutputDirectory: "cdkworkshop.com/cdk.out",
+        commands: [
+          "cd cdkworkshop.com",
+          "npm ci && tar -C /usr/local/bin -xzf hugo/hugo_*_Linux-64bit.tar.gz hugo",
+          "npm run build",
+          "npx cdk synth"
+      ]
+      })
+    })
+
+
+    pipeline.addStage(new TheCdkWorkshopStage(this, 'Prod'));
   }
 }
