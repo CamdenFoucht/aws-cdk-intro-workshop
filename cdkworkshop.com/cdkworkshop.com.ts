@@ -5,9 +5,9 @@ import cdk = require('@aws-cdk/core');
 import cloudfront = require('@aws-cdk/aws-cloudfront');
 import s3 = require('@aws-cdk/aws-s3');
 // import { GuardDutyNotifier } from './guardduty';
-// import s3deploy = require('@aws-cdk/aws-s3-deployment');
-// import path = require('path');
-// import { hashDirectorySync } from './hash';
+import s3deploy = require('@aws-cdk/aws-s3-deployment');
+import path = require('path');
+import { hashDirectorySync } from './hash';
 import { PipelineStack } from './pipeline';
 import * as origins from '@aws-cdk/aws-cloudfront-origins';
 
@@ -69,6 +69,20 @@ export class CdkWorkshop extends cdk.Stack {
             websiteIndexDocument: 'index.html'
         });
 
+        const contentDir = path.join(__dirname, '..', 'workshop', 'public');
+        const contentHash = hashDirectorySync(contentDir);
+
+        new s3deploy.BucketDeployment(this, 'DeployWebsite', {
+            sources: [
+                s3deploy.Source.asset(contentDir)
+            ],
+            destinationBucket: bucket,
+            destinationKeyPrefix: contentHash,
+            retainOnDelete: true
+        });
+
+
+
         new cloudfront.Distribution(this, 'myDist', {
             defaultBehavior: { origin: new origins.S3Origin(bucket) },
         });
@@ -87,17 +101,6 @@ export class CdkWorkshop extends cdk.Stack {
         // // deploy each version of the content to a different prefix (it's also a
         // // good practice, but we plan to support that intrinsicly in
         // // `BucketDeployment`).
-        // const contentDir = path.join(__dirname, '..', 'workshop', 'public');
-        // const contentHash = hashDirectorySync(contentDir);
-
-        // new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-        //     sources: [
-        //         s3deploy.Source.asset(contentDir)
-        //     ],
-        //     destinationBucket: bucket,
-        //     destinationKeyPrefix: contentHash,
-        //     retainOnDelete: true
-        // });
 
         // let acl: string | undefined
         // if (props.restrictToAmazonNetwork) {
