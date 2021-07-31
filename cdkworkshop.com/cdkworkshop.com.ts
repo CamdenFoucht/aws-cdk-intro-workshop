@@ -87,6 +87,21 @@ export class CdkWorkshop extends cdk.Stack {
             },
         });
 
+
+        const cdn = new cloudfront.CloudFrontWebDistribution(this, 'CloudFront', {
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            priceClass: cloudfront.PriceClass.PRICE_CLASS_ALL,
+            originConfigs: [{
+                behaviors: [{
+                    isDefaultBehavior: true,
+                }],
+                originPath: `/${contentHash}`,
+                s3OriginSource: {
+                    s3BucketSource: bucket,
+                }
+            }],
+        })
+
         // // Bucket to hold the static website
         // const bucket = new s3.Bucket(this, 'Bucket', {
         //     websiteIndexDocument: 'index.html'
