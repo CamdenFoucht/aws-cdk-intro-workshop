@@ -90,7 +90,7 @@ export class CdkWorkshop extends cdk.Stack {
 
         bucket.grantRead(originAccessIdentity);
 
-        new cloudfront.CloudFrontWebDistribution(this, 'CloudFront', {
+        const cdn = new cloudfront.CloudFrontWebDistribution(this, 'CloudFront', {
             viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             originConfigs: [{
                 behaviors: [{
@@ -164,10 +164,10 @@ export class CdkWorkshop extends cdk.Stack {
         //     value: 'https://' + props.domain,
         // })
 
-        // new cdk.CfnOutput(this, 'CloudFrontURL', {
-        //     description: 'The CloudFront distribution URL',
-        //     value: 'https://' + cdn.domainName,
-        // })
+        new cdk.CfnOutput(this, 'CloudFrontURL', {
+            description: 'The CloudFront distribution URL',
+            value: 'https://' + cdn.domainName,
+        })
 
         // new cdk.CfnOutput(this, 'CertificateArn', {
         //     description: 'The SSL certificate ARN',
