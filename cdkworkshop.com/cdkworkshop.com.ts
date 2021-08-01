@@ -69,6 +69,7 @@ export class CdkWorkshop extends cdk.Stack {
             websiteIndexDocument: 'index.html',
             publicReadAccess: true,
             autoDeleteObjects: true,
+            removalPolicy: cdk.RemovalPolicy.DESTROY
         });
 
         const contentDir = path.join(__dirname, '..', 'workshop', 'public');
