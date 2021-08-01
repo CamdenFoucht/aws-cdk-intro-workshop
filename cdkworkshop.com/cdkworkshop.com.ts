@@ -7,9 +7,9 @@ import s3 = require('@aws-cdk/aws-s3');
 // import { GuardDutyNotifier } from './guardduty';
 import s3deploy = require('@aws-cdk/aws-s3-deployment');
 import path = require('path');
-import { hashDirectorySync } from './hash';
+// import { hashDirectorySync } from './hash';
 import { PipelineStack } from './pipeline';
-import * as origins from '@aws-cdk/aws-cloudfront-origins';
+// import * as origins from '@aws-cdk/aws-cloudfront-origins';
 
 export interface CdkWorkshopProps extends cdk.StackProps {
 
@@ -93,7 +93,6 @@ export class CdkWorkshop extends cdk.Stack {
                 behaviors: [{
                     isDefaultBehavior: true,
                 }],
-                originPath: `/${contentHash}`,
                 s3OriginSource: {
                     s3BucketSource: bucket,
                     originAccessIdentity: originAccessIdentity,
