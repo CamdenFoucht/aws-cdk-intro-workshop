@@ -66,7 +66,9 @@ export class CdkWorkshop extends cdk.Stack {
 
 
         const bucket = new s3.Bucket(this, 'Bucket', {
-            websiteIndexDocument: 'index.html'
+            websiteIndexDocument: 'index.html',
+            publicReadAccess: true,
+            autoDeleteObjects: true,
         });
 
         const contentDir = path.join(__dirname, '..', 'workshop', 'public');
