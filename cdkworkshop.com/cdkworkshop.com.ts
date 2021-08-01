@@ -70,14 +70,14 @@ export class CdkWorkshop extends cdk.Stack {
         });
 
         const contentDir = path.join(__dirname, '..', 'workshop', 'public');
-        const contentHash = hashDirectorySync(contentDir);
+        // const contentHash = hashDirectorySync(contentDir);
 
         new s3deploy.BucketDeployment(this, 'DeployWebsite', {
             sources: [
                 s3deploy.Source.asset(contentDir)
             ],
             destinationBucket: bucket,
-            destinationKeyPrefix: contentHash,
+            // destinationKeyPrefix: contentHash,
             retainOnDelete: true
         });
 
@@ -86,17 +86,6 @@ export class CdkWorkshop extends cdk.Stack {
         });
 
         bucket.grantRead(originAccessIdentity);
-
-        new cloudfront.Distribution(this, 'myDist', {
-            defaultBehavior: { origin: new origins.S3Origin(bucket, {
-                originPath: `/${contentHash}`,
-                originAccessIdentity: originAccessIdentity,
-            }),
-                allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
-                
-            },
-            
-        });
 
         new cloudfront.CloudFrontWebDistribution(this, 'CloudFront', {
             viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
